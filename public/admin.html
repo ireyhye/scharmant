@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>샤르만트 운영진</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4f4f4f">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="/"><b>SCHARMANT</b><span>운영진</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="login-box" id="login" hidden>
+    <h2>운영진 로그인</h2>
+    <p style="color:var(--muted);margin:0">운영진으로 등록된 Google 계정으로 로그인하세요.</p>
+    <button class="btn" id="btn-login" type="button">Google로 로그인</button>
+    <div class="status-line err" id="login-status"></div>
+  </div>
+
+  <div id="panel" hidden>
+    <section style="border:0;padding-block:28px 48px">
+      <div class="admin-bar">
+        <span class="who" id="who"></span>
+        <button class="btn ghost small" id="btn-logout" type="button">로그아웃</button>
+      </div>
+
+      <div class="admin-tabs" role="tablist">
+        <button class="btn ghost small" role="tab" aria-selected="true" data-tab="apps">지원서 <span id="cnt-apps">0</span></button>
+        <button class="btn ghost small" role="tab" aria-selected="false" data-tab="events">일정</button>
+        <button class="btn ghost small" role="tab" aria-selected="false" data-tab="questions">질문 <span id="cnt-q">0</span></button>
+      </div>
+
+      <div data-panel="apps">
+        <div class="admin-bar">
+          <span class="who" id="apps-status">불러오는 중…</span>
+          <button class="btn ghost small" id="btn-csv" type="button">CSV 내려받기</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상태</th><th>이름</th><th>학번</th><th>학과</th><th>연락처</th><th>기타 경험</th><th>지원 동기</th><th>제출일</th><th></th></tr></thead>
+            <tbody id="apps-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div data-panel="events" hidden>
+        <div class="cal-layout">
+          <div class="cal">
+            <div class="cal-bar">
+              <button class="btn ghost small" type="button" id="cal-prev" aria-label="이전 달">‹</button>
+              <strong id="cal-title"></strong>
+              <button class="btn ghost small" type="button" id="cal-next" aria-label="다음 달">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+          <div class="cal-side">
+            <h3 style="font-size:17px" id="day-title">다가오는 일정</h3>
+            <ul class="ev-list" id="ev-list"></ul>
+            <form id="ev-form" class="ev-form">
+              <div class="eyebrow">일정 추가</div>
+              <input id="ev-date" type="date" required aria-label="날짜">
+              <input id="ev-time" type="time" aria-label="시간">
+              <input id="ev-title" placeholder="일정 이름 (예: 정기 모임)" maxlength="60" required>
+              <input id="ev-place" placeholder="장소 (선택)" maxlength="60">
+              <button class="btn small" type="submit">일정 추가</button>
+              <div class="status-line" id="ev-status"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div data-panel="questions" hidden>
+        <div class="qa-list" id="q-list"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script type="module" src="/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 운영진: admins/{이메일} 문서가 있는 Google 로그인 사용자
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+    function str(v, max) { return v is string && v.size() <= max; }
+
+    // 운영진 명단 — 본인 문서만 읽기 가능, 추가는 Firebase 콘솔에서
+    match /admins/{email} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow write: if false;
+    }
+
+    // 지원서 — 누구나 제출(로그인 불필요), 읽기·수정·삭제는 운영진만
+    match /applications/{id} {
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['name','studentId','major','phone','experience','motive','status','createdAt'])
+                    && str(request.resource.data.name, 30) && request.resource.data.name.size() > 0
+                    && str(request.resource.data.studentId, 12) && request.resource.data.studentId.size() > 0
+                    && str(request.resource.data.major, 40) && request.resource.data.major.size() > 0
+                    && str(request.resource.data.phone, 20) && request.resource.data.phone.size() > 0
+                    && str(request.resource.data.experience, 20)
+                    && str(request.resource.data.motive, 1000)
+                    && request.resource.data.status == 'new'
+                    && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // QnA에서 남긴 질문 — 누구나 남기기, 운영진만 보기
+    match /questions/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['text','contact','done','createdAt'])
+                    && str(request.resource.data.text, 500) && request.resource.data.text.size() > 0
+                    && str(request.resource.data.contact, 60)
+                    && request.resource.data.done == false
+                    && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // 일정 — 누구나 보기, 운영진만 편집
+    match /events/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+  }
+}
